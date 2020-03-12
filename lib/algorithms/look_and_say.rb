@@ -7,10 +7,9 @@ class LookAndSay
 
   def self.call(elements)
     validate_sequence!(elements: elements, regexp: REGEXP, min_length: 1)
-  
+
     elements.last.chars.chunk(&:itself)
-                       .map{ |element, arr| [arr.size, element] }
-                       .join
+            .map { |element, arr| [arr.size, element] }
+            .join
   end
 end
-

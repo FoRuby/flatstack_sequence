@@ -1,21 +1,26 @@
 class Interface
-  MAIN_MENU = {
-    create_sequence:   'New sequence',
-    show_sequence:     'Show sequence elements',
-    generate_sequence: 'Generate sequence elements',
-    exit:              'Exit'
-  }
+  MAIN_MENU = [
+    'Main MENU:',
+    { title: 'New sequence', action: :create_sequence },
+    { title: 'Show sequence elements', action: :show_sequence },
+    { title: 'Generate sequence elements', action: :generate_sequence },
+    { title: 'Exit', action: :exit }
+  ]
 
-  ALGORITHMS = {
-    look_and_say: LookAndSay,
-    fibonacci:    Fibonacci
-  }
+  ALGORITHMS_MENU = [
+    'Select Algorithm:',
+    { title: 'LookAndSay', action: LookAndSay },
+    { title: 'Fibonacci', action: Fibonacci }
+  ]
 
-  ENTER_SEQUENCE_ELEMENTS = 'Enter sequence elements:'
-  NUMBER_OF_ITERATIONS    = 'Number of iterations:'
-  INPUT_ERROR             = 'Input error!'
-  SEQUENCE_IS_EMPTY       = 'Sequence is empty!'
-  SEQUENCE_ELEMENTS       = 'Sequence elements:'
+  ITERATIONS = (1..10)
+
+  ENTER_SEQUENCE_ELEMENTS       = 'Enter sequence elements:'
+  ENTER_NUMBER_OF_ITERATIONS    = 'Enter number of iterations:'
+  ENTER_MENU_ACTION             = 'Enter menu action:'
+  INPUT_ERROR                   = 'Input error! Try again.'
+  SEQUENCE_IS_EMPTY             = 'Sequence is empty!'
+  SEQUENCE_ELEMENTS             = 'Sequence elements:'
 
   def create_sequence
     show_message ENTER_SEQUENCE_ELEMENTS
@@ -23,11 +28,17 @@ class Interface
   end
 
   def set_iteration
-    show_message NUMBER_OF_ITERATIONS
-    gets.to_i
+    show_message ENTER_NUMBER_OF_ITERATIONS
+    loop do
+      input = gets.to_i
+      return input if ITERATIONS.include?(input)
+
+      input_error
+    end
   end
 
-  def enter_action
+  def enter_menu_action
+    show_message(ENTER_MENU_ACTION)
     gets.to_i
   end
 
@@ -42,42 +53,32 @@ class Interface
     puts '-------------------------'
   end
 
-  def show_menu(menu, title = nil)
-    puts title if title
-    menu.each_value.with_index(1) do |value, index|
-      puts "#{index}. #{value}"
-    end
-  end
-
-  def show_main_menu
-    loop do
-      show_menu(MAIN_MENU, 'Main MENU:')
-      case enter_action
-      when 1 then return MAIN_MENU.key('New sequence')
-      when 2 then return MAIN_MENU.key('Show sequence elements')
-      when 3 then return MAIN_MENU.key('Generate sequence elements')
-      when 4 then return MAIN_MENU.key('Exit')
-      else input_error
-      end
-    end
-  end
-
-  def show_algorithms_menu
-    loop do
-      show_menu(ALGORITHMS, 'Select Algorithm:')
-      case enter_action
-      when 1 then return ALGORITHMS[:look_and_say]
-      when 2 then return ALGORITHMS[:fibonacci]
-      else input_error
-      end
-    end
-  end
-
   def show_sequence(sequence)
     return show_message(SEQUENCE_IS_EMPTY) if sequence.elements.empty?
 
     show_message(SEQUENCE_ELEMENTS) do
       sequence.elements.each { |item| puts item }
     end
+  end
+
+  def show_menu(menu)
+    puts menu.first
+    menu.last(menu.size - 1).each.with_index(1) do |hash, index|
+      puts "#{index}. #{hash[:title]}"
+    end
+  end
+
+  def select_menu_option(menu)
+    show_menu(menu)
+    loop do
+      input = enter_menu_action
+      return menu[input][:action] if (1..menu.size).include?(input)
+
+      input_error
+    end
+  end
+
+  def clear
+    puts `clear`
   end
 end

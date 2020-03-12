@@ -8,12 +8,32 @@ RSpec.describe Interface do
   let(:sequence_elements) { %w[12 345] }
   let(:empty_sequence) { Sequence.new }
   let(:message) { 'test_message' }
-  let(:menu) { { option_1: 'Option 1', option_2: 'Option 2' } }
+  let(:menu) do
+    [
+      'menu_title',
+      { title: 'Title1', action: :action1 },
+      { title: 'Title2', action: :action2 }
+    ]
+  end
 
   describe '#show_message' do
-    it 'should output message to stdout' do
-      expect { subject.show_message(message) }
-        .to output(Regexp.new(message)).to_stdout
+    context 'without block' do
+      it 'should output message to stdout' do
+        expect { subject.show_message(message) }
+          .to output(Regexp.new(message)).to_stdout
+      end
+    end
+
+    context 'with block' do
+      it 'should call yield' do
+        expect { |block| subject.show_message(message, &block) }
+          .to yield_with_no_args
+      end
+
+      it 'should output yeld message to stdout' do
+        expect { subject.show_message(message) { puts 'test' } }
+          .to output(Regexp.new('test')).to_stdout
+      end
     end
   end
 
@@ -89,11 +109,17 @@ RSpec.describe Interface do
     end
   end
 
-  describe '#show_menu(menu, title)' do
-    it 'should output title to stdout' do
-      expect { subject.show_menu(menu, 'menu_title') }
+  describe '#show_menu(menu)' do
+    it 'should output menu title to stdout' do
+      expect { subject.show_menu(menu) }
         .to output(Regexp.new('menu_title')).to_stdout
     end
 
+    it 'should output each content title to stdout' do
+      menu.last(menu.size - 1).each do |hash|
+        expect { subject.show_menu(menu) }
+          .to output(Regexp.new(hash[:title].to_s)).to_stdout
+      end
+    end
   end
 end
