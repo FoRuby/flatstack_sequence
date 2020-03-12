@@ -7,22 +7,24 @@ RSpec.describe Fibonacci do
   let(:invalid_sequence3) { [1, 2] }
 
   describe '.call' do
+    subject { Fibonacci }
+
     it "Fibonacci.call(['1', '2', '3']) => 5" do
-      expect(Fibonacci.call(sequence1)).to eq '5'
+      expect(subject.call(sequence1)).to eq '5'
     end
 
     it "Fibonacci.call(['foo', 'bar']) => Invalid sequence length" do
-      expect { Fibonacci.call(invalid_sequence1) }
+      expect { subject.call(invalid_sequence1) }
         .to raise_error(RuntimeError, 'Invalid sequence length')
     end
 
     it "Fibonacci.call(['1']) => Invalid sequence content" do
-      expect { Fibonacci.call(invalid_sequence2) }
+      expect { subject.call(invalid_sequence2) }
         .to raise_error(RuntimeError, 'Invalid sequence content')
     end
 
     it 'Fibonacci.call([1, 2]) => Invalid sequence type' do
-      expect { Fibonacci.call(invalid_sequence3) }
+      expect { subject.call(invalid_sequence3) }
         .to raise_error(RuntimeError, 'Invalid sequence content')
     end
   end

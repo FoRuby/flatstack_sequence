@@ -11,17 +11,19 @@ class Interface
     fibonacci:    Fibonacci
   }
 
+  ENTER_SEQUENCE_ELEMENTS = 'Enter sequence elements:'
+  NUMBER_OF_ITERATIONS    = 'Number of iterations:'
+  INPUT_ERROR             = 'Input error!'
+  SEQUENCE_IS_EMPTY       = 'Sequence is empty!'
+  SEQUENCE_ELEMENTS       = 'Sequence elements:'
+
   def create_sequence
-    puts '-------------------------'
-    puts 'Enter sequence elements: '
-    puts '-------------------------'
+    show_message ENTER_SEQUENCE_ELEMENTS
     gets.chomp.split(' ')
   end
 
   def set_iteration
-    puts '-------------------------'
-    puts '  Number of iterations:  '
-    puts '-------------------------'
+    show_message NUMBER_OF_ITERATIONS
     gets.to_i
   end
 
@@ -30,14 +32,13 @@ class Interface
   end
 
   def input_error
-    puts '-------------------------'
-    puts '      Input error!       '
-    puts '-------------------------'
+    show_message INPUT_ERROR
   end
 
   def show_message(message)
     puts '-------------------------'
     puts message
+    yield if block_given?
     puts '-------------------------'
   end
 
@@ -73,13 +74,10 @@ class Interface
   end
 
   def show_sequence(sequence)
-    puts '-------------------------'
-    if sequence.elements.empty?
-      puts '   Sequence is empty!    '
-    else
-      puts '   Sequence elements:    '
+    return show_message(SEQUENCE_IS_EMPTY) if sequence.elements.empty?
+
+    show_message(SEQUENCE_ELEMENTS) do
       sequence.elements.each { |item| puts item }
     end
-    puts '-------------------------'
   end
 end
