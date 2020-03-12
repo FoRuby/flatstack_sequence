@@ -10,7 +10,9 @@ class Control
   end
 
   def menu
-    loop { send(interface.show_main_menu) }
+    loop do
+      send(interface.select_menu_option(Interface::MAIN_MENU))
+    end
   rescue RuntimeError => e
     interface.show_message(e.message)
     retry
@@ -18,17 +20,20 @@ class Control
 
   private
 
-  def create_sequence
-    @sequence.elements = interface.create_sequence
+  def set_sequence
+    interface.clear
+    sequence.elements = interface.set_sequence
   end
 
   def show_sequence
+    interface.clear
     interface.show_sequence(sequence)
   end
 
   def generate_sequence
+    interface.clear
     sequence.generate(
-      algorithm: interface.show_algorithms_menu,
+      algorithm: interface.select_menu_option(Interface::ALGORITHMS_MENU),
       iteration: interface.set_iteration
     )
   end
