@@ -1,5 +1,5 @@
 module Validation
-  INVALID_SEQUENCE_LENGTH = 'Invalid sequence length'
+  INVALID_SEQUENCE_LENGTH  = 'Invalid sequence length'
   INVALID_SEQUENCE_CONTENT = 'Invalid sequence content'
 
   def validate_sequence!(elements:, regexp: nil, min_length: nil)
